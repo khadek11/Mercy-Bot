@@ -1,0 +1,9 @@
+{
+  "buildCommand": "prisma generate && npm run build",
+  "functions": {
+    "src/app/api/upload-pdf/route.js": {
+      "maxDuration": 30
+    }
+  },
+  "regions": ["iad1"]
+}
