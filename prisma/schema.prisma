@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chats     Chat[] // Relation to Chat model
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id]) // Relation to User model
+  chatId    String
+  messages  Message[] // Relation to Message model
+  @@unique([userId, chatId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id]) // Relation to Chat model
+  role      String // "user" or "ai"
+  type      String @default("text") // "text" or "document"
+  text      String
+  meta      Json? // for storing extra info (like filePath, embedding, etc.)
+  timestamp DateTime @default(now())
+}
+
+model Document {
+  id        String    @id @default(uuid())
+  text      String
+  embedding Float[]
+  timestamp DateTime  @default(now())
+  @@index([timestamp]) // Define index at the model level
+}
